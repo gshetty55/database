@@ -1,0 +1,31 @@
+SSH_KEY="-i /.ssh/id_rsa"
+REMOTE_HOST=ops@git-server
+#REMOTE_DIR=/home/ops/tmp
+#REMOTE_DIR_PATH=${REMOTE_DIR}/${Database}/scripts
+DB_SCRIPT_LOC=/home/ops/all_script
+check_RC()
+{	if [  $1 -ne 0 ]
+	then
+    	echo
+        echo"Error----- by $2!"
+        echo
+        exit $1
+    fi
+}
+Copy_Files()
+{
+	DB_SCRIPT_LOC=/home/ops/all_script
+	echo "$1" "$2" > ${DB_SCRIPT_LOC}/test.txt
+}
+
+#ssh ${SSH_KEYS} ${REMOTE_HOST} "[ -d ${REMOTE_DIR} ] && rm -r ${REMOTE_DIR}/* ; mkdir -p ${REMOTE_DIR_PATH}"
+#check_RC $? "tmp directory creation"
+
+#git checkout for commit ID
+git checkout $CommitID $FileName
+
+#delete all files except the script file
+find . ! -name "$FileName" -type f -exec rm -f {} +
+
+#copy the files to DB servers
+scp ${SSH_KEYS} $FileName ${REMOTE_HOST}:${DB_SCRIPT_LOC}/for_${Database}
